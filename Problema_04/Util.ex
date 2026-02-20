@@ -1,26 +1,30 @@
 defmodule Util do
   @moduledoc "Módulo de utilidades para mostrar mensajes y solicitar entrada del usuario."
 
-  @doc "Imprime un mensaje en la consola de salida estándar."
+  @doc "Imprime un mensaje en la consola."
   def mostrar_mensaje(mensaje) do
-    mensaje
-    |> IO.puts()
+    IO.puts(mensaje)
   end
 
-  @doc "Solicita entrada al usuario y la convierte a número entero."
-  def ingresar(mensaje, :entero) do
-    mensaje
-    |> IO.gets()
-    |> String.trim()
-    |> String.to_integer()
-  end
+  @doc "Solicita un número entero."
+  def ingresar(mensaje, :entero),
+    do: ingresar(mensaje, &String.to_integer/1, :entero)
 
-  @doc "Solicita entrada al usuario y la convierte a número decimal."
-  def ingresar(mensaje, :float) do
-    mensaje
-    |> IO.gets()
-    |> String.trim()
-    |> String.to_float()
-  end
+  @doc "Solicita un número real."
+  def ingresar(mensaje, :real),
+    do: ingresar(mensaje, &String.to_float/1, :real)
 
+  # Función privada general
+  defp ingresar(mensaje, parser, tipo_dato) do
+    try do
+      mensaje
+      |> IO.gets()
+      |> String.trim()
+      |> parser.()
+    rescue
+      ArgumentError ->
+        IO.puts("Error, se espera un número #{tipo_dato}\n")
+        ingresar(mensaje, parser, tipo_dato)
+    end
+  end
 end
