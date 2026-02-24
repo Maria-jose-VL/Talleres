@@ -1,39 +1,37 @@
 defmodule ValidacionAcceso do
-
   def main do
+    _nombre = Util.ingresar("Ingrese su nombre: ", :texto)
+    edad = Util.ingresar("Ingrese su edad: ", :entero)
+    credencial = Util.ingresar("¿Tiene credencial? (si/no): ", :booleano)
+    intentos = Util.ingresar("Número de intentos fallidos: ", :entero)
 
-    nombre = "Ingrese su nombre: "
-    |> Util.ingresar(:texto)
+    resultado = validar_acceso(edad, credencial, intentos)
 
-    edad = "Ingrese su edad: "
-    |> Util.ingresar(:entero)
-
-    credencial = "¿Tiene credencial?: "
-    |> Util.ingresar(:booleano)
-
-    validar_acceso(credencial)
+    mostrar_resultado(resultado)
   end
 
-  def validar_acceso(edad, credencial) do
-    
-    #se valida la edad primero y luego la credencial
-    #si la edad no es permitida no se valida la credencial
-
-    if edad >= 18 do
-      IO.puts("Edad permitida. Acceso permitido.")
+  def validar_acceso(edad, credencial, intentos) do
+    unless credencial do
+      {:error, "No posee credenciales válidas"}
     else
-      IO.puts("Edad no permitida. Acceso denegado.")
-    end
+      cond do
+        edad < 18 ->
+          {:error, "Usuario menor de edad"}
 
-    credencial = IO.gets("¿Tiene credencial? (sí/no): ")
-    |> String.trim()
-    |> String.downcase()
+        intentos > 3 ->
+          {:error, "Cuenta bloqueada por intentos fallidos"}
 
-    if credencial == "si" do
-      IO.puts("Acceso permitido.")
-    else
-      IO.puts("Acceso denegado.")
+        true ->
+          {:ok, "Acceso concedido"}
+      end
     end
   end
 
+  def mostrar_resultado({:ok, mensaje}) do
+    IO.puts(mensaje)
+  end
+
+  def mostrar_resultado({:error, mensaje}) do
+    IO.puts(mensaje)
+  end
 end
