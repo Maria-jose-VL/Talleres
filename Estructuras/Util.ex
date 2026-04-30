@@ -1,17 +1,28 @@
 defmodule Util do
-  @moduledoc "Módulo de utilidades para mostrar mensajes y solicitar entrada al usuario."
 
-  @doc "Imprime un mensaje en la consola de salida estándar."
   def mostrar_mensaje(mensaje) do
+    IO.puts(mensaje)
     mensaje
-    |> IO.puts()
   end
 
-  @doc "Solicita entrada del usuario y la convierte al tipo especificado."
-  def ingresar(mensaje,:entero ) do
-    mensaje
-    |> IO.gets()
-    |> String.trim()
-    |> String.to_integer()
+  def ingresar(mensaje, tipo) do
+    IO.puts(mensaje)
+
+    entrada = IO.gets("> ") |> String.trim()
+
+    convertir(entrada, tipo)
   end
+
+  defp convertir(valor, :string) do
+    valor
+  end
+
+  defp convertir(valor, :entero) do
+    String.to_integer(valor)
+  end
+
+  defp convertir(valor, :flotante) do
+    String.to_float(valor)
+  end
+
 end
